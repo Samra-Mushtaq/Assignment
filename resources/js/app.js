@@ -1,2 +1,7 @@
 import './bootstrap';
-import '../css/app.css'; 
+window.$ = window.jQuery = require('jquery');
+import Alpine from 'alpinejs';
+
+window.Alpine = Alpine;
+
+Alpine.start();

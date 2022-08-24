@@ -301,3 +301,10 @@
         </div><!-- .nk-header-wrap -->
     </div><!-- .container-fliud -->
 </div>
+
+<script>
+    $(document).ready(function(){
+    });
+    var APP_URL = {!! json_encode(url('/')) !!};
+    
+</script>

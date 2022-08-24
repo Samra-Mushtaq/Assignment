@@ -14,5 +14,25 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('layouts.main_layout');
+    return view('welcome');
+});
+// Route::get('/a', function () {
+    // return view('dashboard');
+// });
+
+Route::get('/dashboard', function () {
+    return view('backend.dahboard.app');
+})->middleware(['auth'])->name('dashboard');
+
+require __DIR__.'/auth.php';
+
+Route::resource('products', ProductController::class);
+Route::resource('categories', CategoryController::class);
+Route::resource('translations', TranslationController::class);
+Route::resource('notifications', NotificationController::class);
+
+Route::group(['middleware' => ['auth']], function() {
+    Route::resource('roles', RoleController::class);
+    Route::resource('users', UserController::class);
+    Route::resource('products', ProductController::class);
 });

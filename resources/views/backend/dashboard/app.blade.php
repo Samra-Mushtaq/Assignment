@@ -2,7 +2,7 @@
 <html lang="zxx" class="js">
 
 <head>
-    @include('head.main_head')
+    @include('backend.partial.head')
 </head>
 
 <body class="nk-body bg-lighter npc-default has-sidebar ">
@@ -10,21 +10,21 @@
         <!-- main @s -->
         <div class="nk-main ">
             <!-- sidebar @s -->
-            @include('sidebar.main_sidebar')
+            @include('backend.partial.sidebar')
             <!-- sidebar @e -->
             <!-- wrap @s -->
             <div class="nk-wrap ">
                 <!-- main header @s -->
-                @include('header.main_header')
+                @include('backend.partial.header')
                 <!-- main header @e -->
                 <!-- content @s -->
                 <div class="nk-content ">
-                @include('content.main_content')
+                @include('backend.dashboard.content')
                 </div>
                 <!-- content @e -->
                 <!-- footer @s -->
                 <div class="nk-footer">
-                @include('footer.main_footer')
+                @include('backend.partial.footer')
                 </div>
                 <!-- footer @e -->
             </div>
