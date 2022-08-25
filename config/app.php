@@ -159,6 +159,7 @@ return [
         /*
          * Laravel Framework Service Providers...
          */
+        Yajra\Datatables\DatatablesServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
         Illuminate\Auth\AuthServiceProvider::class,
         Illuminate\Broadcasting\BroadcastServiceProvider::class,
@@ -211,6 +212,7 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'ExampleClass' => App\Example\ExampleClass::class,
+        'Datatables' => Yajra\Datatables\Facades\Datatables::class,
         'Image'     => Intervention\Image\Facades\Image::class,
     ])->toArray(),
 

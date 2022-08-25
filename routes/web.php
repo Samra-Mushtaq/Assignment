@@ -21,18 +21,24 @@ Route::get('/', function () {
 // }); //
 
 Route::get('/dashboard', function () {
-    return view('backend.dahboard.app');
+    return view('backend.dashboard.index');
+})->middleware(['auth'])->name('dashboard');
+
+Route::get('/users-info', function () {
+    return view('backend.users.index');
 })->middleware(['auth'])->name('dashboard');
 
 require __DIR__.'/auth.php';
 
-Route::resource('products', ProductController::class);
-Route::resource('categories', CategoryController::class);
-Route::resource('translations', TranslationController::class);
-Route::resource('notifications', NotificationController::class);
+ 
+Route::get('/search-users', 'App\Http\Controllers\Backend\UserController@index')->name('searchusers.index');
+
+Route::resource('translations', 'App\Http\Controllers\Backend\TranslationController');
+Route::resource('notifications', 'App\Http\Controllers\Backend\NotificationController');
 
 Route::group(['middleware' => ['auth']], function() {
-    Route::resource('roles', RoleController::class);
-    Route::resource('users', UserController::class);
-    Route::resource('products', ProductController::class);
+    Route::resource('roles', 'App\Http\Controllers\Backend\RoleController');
+    Route::resource('users', 'App\Http\Controllers\Backend\UserController');
+    Route::resource('products', 'App\Http\Controllers\Backend\ProductController');
+    Route::resource('categories', 'App\Http\Controllers\Backend\CategoryController');
 });

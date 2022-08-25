@@ -35,9 +35,10 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->phone_no);
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'phone_no' => ['required', 'number', 'max:11'],
+            'phone_no' => ['required', 'numeric'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', Rules\Password::defaults()],
         ]);
@@ -49,14 +50,15 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
-         
-        // Mail::to('samrakosar72@gmail.com')->send(new RegisterMail($name, $email ));
-        // dd("");
+        
+        Mail::to('admin@admin.com')->send(new RegisterMail($name, $email ));
+        return $user;
+        // dd("Email send");
  
-        event(new Registered($user));
+        // event(new Registered($user));
 
-        Auth::login($user);
+        // Auth::login($user);
 
-        return redirect(RouteServiceProvider::HOME);
+        // return redirect(RouteServiceProvider::HOME);
     }
 }

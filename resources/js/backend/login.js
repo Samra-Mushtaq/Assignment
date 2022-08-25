@@ -1,5 +1,4 @@
 jQuery(document).ready(function () {
-    alert();
     jQuery.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')

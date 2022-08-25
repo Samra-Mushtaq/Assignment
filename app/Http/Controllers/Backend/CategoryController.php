@@ -14,17 +14,20 @@ class CategoryController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    function __construct()
-    {
-         $this->middleware('permission:category-list|category-create|category-edit|category-delete', ['only' => ['index','show']]);
-         $this->middleware('permission:category-create', ['only' => ['create','store']]);
-         $this->middleware('permission:category-edit', ['only' => ['edit','update']]);
-         $this->middleware('permission:category-delete', ['only' => ['destroy']]);
-    }
+    // function __construct()
+    // {
+    //      $this->middleware('permission:category-list|category-create|category-edit|category-delete', ['only' => ['index','show']]);
+    //      $this->middleware('permission:category-create', ['only' => ['create','store']]);
+    //      $this->middleware('permission:category-edit', ['only' => ['edit','update']]);
+    //      $this->middleware('permission:category-delete', ['only' => ['destroy']]);
+    // }
 
-    public function index()
+    public function index(Request $request)
     {
         //
+        $categories = Category::orderBy('id','DESC')->paginate(5);
+        return view('backend.categories.index',compact('categories'))
+            ->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     /**
@@ -45,7 +48,11 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $category = Category::create([
+            'name' => $request->name,
+            'detail' => $request->detail,
+        ]);
+        return 1;
     }
 
     /**
@@ -54,9 +61,14 @@ class CategoryController extends Controller
      * @param  \App\Models\Backend\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function show(Category $category)
+    public function show(Request $request, $id)
     {
         //
+        $category = Category::find($id);
+        $category->name = $request->name;
+        $category->detail = $request->detail;
+        $res = $category->save();
+        return $res;
     }
 
     /**
@@ -65,9 +77,11 @@ class CategoryController extends Controller
      * @param  \App\Models\Backend\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function edit(Category $category)
+    public function edit($id)
     {
         //
+        $category = Category::find($id);
+        return $category;
     }
 
     /**
@@ -77,9 +91,14 @@ class CategoryController extends Controller
      * @param  \App\Models\Backend\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Category $category)
+    public function update(Request $request, $id)
     {
         //
+        $category = Category::find($id);
+        $category->name = $request->name;
+        $category->detail = $request->detail;
+        $res = $category->save();
+        return $res;
     }
 
     /**
@@ -88,8 +107,12 @@ class CategoryController extends Controller
      * @param  \App\Models\Backend\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Category $category)
+    public function destroy($id)
     {
         //
+        $category = Category::find($id);
+        $res = $category->delete();
+        return $res;
+
     }
 }

@@ -1,4 +1,4 @@
-@extends('backend.auth.app')
+@extends('layouts.backend.auth_app')
 @section('content')
 
 <!-- @vite(['resources/backend/js/login.js']) -->

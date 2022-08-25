@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 
+use DataTables;
+
 class UserController extends Controller
 {
     /**
@@ -14,9 +16,24 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         //
+        if ($request->ajax()) {
+            $data = User::select('*');
+            return Datatables::of($data)
+                    ->addIndexColumn()
+                    ->addColumn('action', function($row){
+       
+                            $btn = '<a href="javascript:void(0)" class="edit btn btn-primary btn-sm">View</a>';
+      
+                            return $btn;
+                    })
+                    ->rawColumns(['action'])
+                    ->make(true);
+        }
+          
+        return view('backend.user.search');
     }
 
     /**
@@ -27,6 +44,8 @@ class UserController extends Controller
     public function create()
     {
         //
+        // $roles = Role::pluck('name','name')->all();
+        // return view('users.create',compact('roles'));
     }
 
     /**
