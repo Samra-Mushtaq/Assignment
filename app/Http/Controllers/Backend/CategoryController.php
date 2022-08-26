@@ -26,8 +26,9 @@ class CategoryController extends Controller
     {
         //
         $categories = Category::orderBy('id','DESC')->paginate(5);
-        return view('backend.categories.index',compact('categories'))
-            ->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('backend.categories.index',compact('categories'));
+        // ->with('i', ($request->input('page', 1) - 1) * 5);
+            
     }
 
     /**

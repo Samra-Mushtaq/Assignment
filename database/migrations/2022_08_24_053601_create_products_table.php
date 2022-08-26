@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('language');
             $table->integer('price');
             $table->string('description')->nullable();
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }

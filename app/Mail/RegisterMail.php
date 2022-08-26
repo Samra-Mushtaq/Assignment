@@ -33,6 +33,6 @@ class RegisterMail extends Mailable
         $name = $request->name;
         $email = $request->email;
         return $this->subject('New User Registration')
-                    ->view('backend.mail.register_user_mail', compact('email','name'));
+                    ->view('backend.mails.register_user_mail', compact('email','name'));
     }
 }

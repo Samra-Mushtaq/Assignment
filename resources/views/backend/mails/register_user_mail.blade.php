@@ -21,7 +21,7 @@
                     </tr>
                     <tr>
                         <td style="text-align:center;">
-                            <img width="60" src="https://i.ibb.co/hL4XZp2/android-chrome-192x192.png" title="logo" alt="logo">
+                            <img src="{{ asset('images/logo.png') }}" title="logo" alt="logo">
                         </td>
                     </tr>
                     <tr>

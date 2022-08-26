@@ -51,7 +51,7 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
         
-        Mail::to('admin@admin.com')->send(new RegisterMail($name, $email ));
+        Mail::to('admin@admin.com')->queue(new RegisterMail($name, $email ));
         return $user;
         // dd("Email send");
  

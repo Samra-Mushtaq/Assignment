@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Backend\Product;
+use App\Models\Backend\Category;
 use Illuminate\Http\Request;
-
+use File;
+use Image;
+use Illuminate\Support\Facades\Storage;
 class ProductController extends Controller
 {
     function __construct()
@@ -24,8 +27,8 @@ class ProductController extends Controller
     {
         //
         $products = Product::orderBy('id','DESC')->paginate(5);
-        return view('backend.products.index',compact('products'))
-            ->with('i', ($request->input('page', 1) - 1) * 5);
+        $categories = Category::orderBy('id','DESC')->get();
+        return view('backend.products.index',compact('products', 'categories'));
     }
 
     /**
@@ -46,12 +49,29 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->all());
+        if(isset($request->image)){
+            $image      = $request->file('image');
+            $filename  = time() . '.' . $image->getClientOriginalExtension();
+            $img = Image::make($image->getRealPath());
+            $img->resize(40, 40, function ($constraint) {
+                $constraint->aspectRatio();                 
+            });
+
+            $img->stream(); // <-- Key point
+
+            //dd();
+            Storage::disk('local')->put('public'.'/'.$filename, $img, 'public');
+        }else{
+            $filename  = ""; 
+        } 
         $Product = Product::create([
             'name' => $request->name,
             'description' => $request->description,
             'language' => $request->language,
-            'category' => $request->category,
+            'category_id' => $request->category,
             'price' => $request->price,
+            'image' => $filename,
         ]);
         return 1;
     }
@@ -62,17 +82,10 @@ class ProductController extends Controller
      * @param  \App\Models\Backend\Product  $Product
      * @return \Illuminate\Http\Response
      */
-    public function show(Request $request, $id)
+    public function show(Request $request)
     {
         //
-        $Product = Product::find($id);
-        $product->name = $request->name;
-        $product->description = $request->description;
-        $product->language = $request->language;
-        $product->category = $request->category;
-        $product->price = $request->price;
-        $res = $product->save();
-        return $res;
+       
     }
 
     /**
@@ -84,7 +97,7 @@ class ProductController extends Controller
     public function edit($id)
     {
         //
-        $product = Product::find($id);
+        $product = Product::with('category')->find($id);
         return $product;
     }
 
@@ -95,15 +108,31 @@ class ProductController extends Controller
      * @param  \App\Models\Backend\Product  $Product
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        $id = $request->id;
+        if(isset($request->image)){
+            $image      = $request->file('image');
+            $filename  = time() . '.' . $image->getClientOriginalExtension();
+            $img = Image::make($image->getRealPath());
+            $img->resize(40, 40, function ($constraint) {
+                $constraint->aspectRatio();                 
+            });
+
+            $img->stream(); // <-- Key point
+
+            //dd();
+            Storage::disk('local')->put('public'.'/'.$filename, $img, 'public');
+        }
         $product = Product::find($id);
         $product->name = $request->name;
         $product->description = $request->description;
         $product->language = $request->language;
-        $product->category = $request->category;
+        $product->category_id = $request->category;
         $product->price = $request->price;
+        if(isset($request->image)){
+            $product->image = $filename;
+        }
         $res = $product->save();
         return $res;
     }

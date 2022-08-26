@@ -1,52 +1,65 @@
-@extends('layouts.backend.app')
+@extends('layouts.backend.datatable_app')
 
 @section('content')
-<div class="row">
-    <div class="col-lg-12 margin-tb">
-        <div class="pull-left">
-            <h2>Categories Management</h2>
-        </div>
-        <div class="pull-right pt-3 pb-5">
-            <a class="btn btn-success" id="create_category"> Create New Category</a>
+<div class="nk-content ">
+    <div class="container-fluid">
+        <div class="nk-content-inner">
+            <div class="nk-content-body">
+                <div class="nk-block nk-block-lg">
+                    <div class="nk-block-head">
+                        <div class="nk-block-head-content">
+                            <h4 class="nk-block-title">Category Lists</h4>
+                        </div>
+                    </div>
+                    @if ($message = Session::get('success'))
+                        <div class="alert alert-success">
+                            <p>{{ $message }}</p>
+                        </div>
+                    @endif
+                    <div class="pull-right pb-3">
+                        <a class="btn btn-success" id="create_category"> Create New Category</a>
+                    </div>
+                    <div class="card card-preview">
+                        <div class="card-inner">
+                            <table class="datatable-init table data-table">
+                                <thead>
+                                    <tr>
+                                        <th>S.No</th>
+                                        <th>Name</th>
+                                        <th>Detail</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($categories as $key => $category)
+                                    <tr>
+                                        <td>{{ ++$key }}</td>
+                                        <td>{{ $category->name }}</td>
+                                        <td>{{ $category->detail }}</td>
+                                        <td>
+                                            <a class="btn btn-primary" onclick="edit_category('{{$category->id}}')">Edit</a>
+                                            <a class="btn btn-danger" onclick="delete_category('{{$category->id}}')">Delete</a>
+                                        
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-
-@if ($message = Session::get('success'))
-    <div class="alert alert-success">
-        <p>{{ $message }}</p>
-    </div>
-@endif
-
-
-<table class="table table-bordered">
-  <tr>
-     <th>No</th>
-     <th>Name</th>
-     <th>Detail</th>
-     <th width="280px">Action</th>
-  </tr>
-    @foreach ($categories as $key => $category)
-    <tr>
-        <td>{{ ++$i }}</td>
-        <td>{{ $category->name }}</td>
-        <td>{{ $category->detail }}</td>
-        <td>
-            <a class="btn btn-primary" onclick="edit_category('{{$category->id}}')">Edit</a>
-            <a class="btn btn-danger" onclick="delete_category('{{$category->id}}')">Delete</a>
-        
-        </td>
-    </tr>
-    @endforeach
-</table>
 
 <div class="modal fade" id="category_model">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Category Info</h5>
-                <a href="#" class="close" data-dismiss="modal" aria-label="Close">
+                <a onclick="close_model()" class="close" data-dismiss="modal" aria-label="Close">
                     <em class="icon ni ni-cross"></em>
                 </a>
                 <input type="hidden" class="form-control" id="edit_id" required>
@@ -76,7 +89,7 @@
 <div class="modal fade" tabindex="-1" id="message_model">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <a href="#" class="close" data-dismiss="modal" aria-label="Close">
+            <a onclick="close_msg_model()" class="close" data-dismiss="modal" aria-label="Close">
                 <em class="icon ni ni-cross"></em>
             </a>
             <div class="modal-header">
@@ -164,7 +177,16 @@
         }
         
     }
-
+    function close_model(){
+        $("#name").val("");
+        $("#detail").val("");
+        $("#edit_id").val("");
+        $("#category_model").modal('hide');
+    }
+    function close_msg_model(){
+        location.reload();
+        $("#message_model").modal('hide');
+    }
     function edit_category(id){
         jQuery.ajax({
             type: "GET",
