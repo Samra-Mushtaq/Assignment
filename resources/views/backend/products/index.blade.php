@@ -1,14 +1,19 @@
 @extends('layouts.backend.datatable_app')
 
 @section('content')
-<div class="nk-content ">
+<div class="nk-content p-0">
     <div class="container-fluid">
         <div class="nk-content-inner">
             <div class="nk-content-body">
                 <div class="nk-block nk-block-lg">
                     <div class="nk-block-head">
                         <div class="nk-block-head-content">
-                            <h4 class="nk-block-title">Products List</h4>
+                            <h4 class="nk-block-title">
+                                Products
+                                @can('product-create')
+                                    <a class="btn btn-success ml-4" id="create_product"> Create New Product</a>
+                                @endcan
+                            </h4>
                         </div>
                     </div>
                     @if ($message = Session::get('success'))
@@ -16,20 +21,19 @@
                             <p>{{ $message }}</p>
                         </div>
                     @endif
-                    <div class="pull-right pb-3">
-                        <a class="btn btn-success" id="create_product"> Create New Product</a>
-                    </div>
+
                     <div class="card card-preview">
                         <div class="card-inner">
                             <table class="datatable-init table data-table">
                                 <thead>
                                     <tr>
                                         <th>No</th>
-                                        <th>Name</th>
+                                        <th>Name (en)</th>
+                                        <th>Name (ar)</th>
+                                        <th>Description (en)</th>
+                                        <th>Description (ar)</th>
                                         <th>Category</th>
-                                        <th>Description</th>
                                         <th>price</th>
-                                        <th>Language</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -39,15 +43,19 @@
                                         <td>{{ ++$key }}</td>
                                         <td><span class="tb-product">
                                                             <img src="{{ asset('storage/' . $product->image) }}" alt="" class="thumb">
-                                                        </span>{{ $product->name }}</td>
-                                        <td>{{ $product->category->name }}</td>
-                                        <td>{{ $product->description }}</td>
+                                                        </span>{{ $product->en_name }}</td>
+                                        <td>{{ $product->ar_name }}</td>
+                                        <td>{{ $product->en_description }}</td>
+                                        <td>{{ $product->ar_description }}</td>
+                                        <td>{{ $product->category->en_name }} | {{ $product->category->ar_name }}</td>
                                         <td>{{ $product->price }}</td>
-                                        <td>{{ $product->language }}</td>
                                         <td>
-                                            <a class="btn btn-primary" onclick="edit_product('{{$product->id}}')">Edit</a>
-                                            <a class="btn btn-danger" onclick="delete_product('{{$product->id}}')">Delete</a>
-                                        
+                                            @can('product-edit')
+                                            <a class="btn btn-primary mb-2" onclick="edit_product('{{$product->id}}')">Edit</a>
+                                            @endcan
+                                            @can('product-delete') 
+                                            <a class="btn btn-danger mb-2" onclick="delete_product('{{$product->id}}')">Delete</a>
+                                            @endcan
                                         </td>
                                     </tr>
                                     @endforeach
@@ -77,9 +85,15 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label class="form-label" for="name"> Name</label>
+                        <label class="form-label" for="en_name"> Name (en)</label>
                         <div class="form-control-wrap">
-                            <input type="text" class="form-control" name="name" id="name" required>
+                            <input type="text" class="form-control" name="en_name" id="en_name" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="ar_name"> Name (ar)</label>
+                        <div class="form-control-wrap">
+                            <input type="text" class="form-control" name="ar_name" id="ar_name" required>
                         </div>
                     </div>
                     <div class="form-group">
@@ -88,19 +102,22 @@
                             <select class="form-select form-select-solid" name="category" id="category">
                                 <option value="0" selected disabled>Select Category</option>
                                 @foreach ($categories as $key => $category)
-                                    <option value="{{$category->id}}">{{$category->name}}</option>
+                                    <option value="{{$category->id}}">{{$category->en_name}} | {{$category->ar_name}}</option>
                                 @endforeach
                             </select>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="language">Language</label>
+                        <label class="form-label" for="en_description">Description (en)</label>
                         <div class="form-control-wrap">
-                            <select class="form-select form-select-solid" name="language" id="language">
-                                <option value="0" selected disabled>Select Language</option>
-                                <option value="English">English</option>
-                                <option value="Arabic">Arabic</option>
-                            </select>
+                            <textarea class="form-control"  name="en_description"  id="en_description"></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="ar_description">Description (ar)</label>
+                        <div class="form-control-wrap">
+                            <textarea class="form-control"  name="ar_description"  id="ar_description"></textarea>
                         </div>
                     </div>
                     <div class="form-group">
@@ -110,9 +127,13 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="description">Description</label>
+                        <label class="form-label" for="status">Status</label>
                         <div class="form-control-wrap">
-                            <textarea class="form-control"  name="description"  id="description"></textarea>
+                            <select class="form-select form-select-solid" name="status" id="status">
+                                <option value="0" selected disabled>Select Status</option>
+                                <option value="Active">Active</option>
+                                <option value="Pending">Pending</option>
+                            </select>
                         </div>
                     </div>
                     <div class="form-group">
@@ -163,32 +184,62 @@
         });
     });
     $(document).on("click", "#create_product", function(event) { 
-      
+        $("#en_name").val("");
+        $("#en_description").val("");
+        $("#ar_name").val("");
+        $("#ar_description").val("");
+        $("#status").val("");
+        $("#category").val("");
+        $("#price").val("");
+        $("#edit_id").val("");
         $("#save_button").removeClass("hidden");
         $("#update_button").addClass("hidden");
         $("#product_model").modal('show');
     });
     $('#form_data').on('submit',(function(e) {
         err_res = 0;
-        var name = $("#name").val();
-        var description = $("#description").val();
-        var language = $("#language").val();
+        var en_name = $("#en_name").val();
+        var en_description = $("#en_description").val();
+        var ar_name = $("#ar_name").val();
+        var ar_description = $("#ar_description").val();
+        var status = $("#status").val();
         var category = $("#category").val();
         var price = $("#price").val();
 
-        if (name == '' || name == null) {
-            $('#name').css("border-color", "red");
+        if (en_name == '' || en_name == null) {
+            $('#en_name').css("border-color", "red");
             err_res = 1;
         }
         else{
-            $('#name').css("border-color", "#dfdfdf");
+            $('#en_name').css("border-color", "#dfdfdf");
         }
-        if (language == '' || language == null) {
-            $('#language').css("border-color", "red");
+        if (ar_name == '' || ar_name == null) {
+            $('#ar_name').css("border-color", "red");
             err_res = 1;
         }
         else{
-            $('#language').css("border-color", "#dfdfdf");
+            $('#ar_name').css("border-color", "#dfdfdf");
+        }
+        if (en_description == '' || en_description == null) {
+            $('#en_description').css("border-color", "red");
+            err_res = 1;
+        }
+        else{
+            $('#en_description').css("border-color", "#dfdfdf");
+        }
+        if (ar_description == '' || ar_description == null) {
+            $('#ar_description').css("border-color", "red");
+            err_res = 1;
+        }
+        else{
+            $('#ar_description').css("border-color", "#dfdfdf");
+        }
+        if (status == '' || status == null) {
+            $('#status').css("border-color", "red");
+            err_res = 1;
+        }
+        else{
+            $('#status').css("border-color", "#dfdfdf");
         }
         if (category == '' || category == null) {
             $('#category').css("border-color", "red");
@@ -204,13 +255,7 @@
         else{
             $('#price').css("border-color", "#dfdfdf");
         }
-        if (description == '' || description == null) {
-            $('#description').css("border-color", "red");
-            err_res = 1;
-        }
-        else{
-            $('#description').css("border-color", "#dfdfdf");
-        }
+        
         if(err_res == 0){
             event.preventDefault();
             var formData = new FormData(this);
@@ -232,37 +277,36 @@
                 processData: false,
                 success:function(data)
                 {
+                    $("#product_model").modal('hide');
                     if(id == ""){
-                        $("#msg").html("Product Successfully Created");
-                        $("#message_model").modal('show');
+                        // $("#msg").html("Product Successfully Created");
+                        // $("#message_model").modal('show');
+                        swal("Product Alert", "Product Successfully Created", "success").then((value) => {
+                            location.reload();
+                        });
                     }else{
-                        $("#msg").html("Product Successfully Updated");
-                        $("#message_model").modal('show');
+                        // $("#msg").html("Product Successfully Updated");
+                        // $("#message_model").modal('show');
+                        swal("Product Alert", "Product Successfully Updated", "success").then((value) => {
+                            location.reload();
+                        });
                     }
                 },
                 error: function(data)
                 {
-                    $("#msg").html("Something Went wrong");
-                    $("#message_model").modal('show');
+                    swal("Product Alert", "Something Went Wrong", "error").then((value) => {
+                        location.reload();
+                    });
+                    // console.log(data);
+                    // $("#msg").html("Something Went wrong");
+                    // $("#message_model").modal('show');
                 }
             });
-            $("#name").val("");
-            $("#description").val("");
-  		    $("#language").val("");
-            $("#category").val("");
-            $("#price").val("");
-            $("#edit_id").val("");
-            $("#product_model").modal('hide');
+            // $("#product_model").modal('hide');
         }
     }));
    
     function close_model(){
-        $("#name").val("");
-        $("#description").val("");
-        $("#language").val("");
-        $("#category").val("");
-        $("#price").val("");
-        $("#edit_id").val("");
         $("#product_model").modal('hide');
     }
     function close_msg_model(){
@@ -277,9 +321,13 @@
             },
             success: function (response) {
                 
-                $("#name").val(response.name);
-                $("#description").val(response.description);               
- 		        $("#language").val(response.language);
+                $("#en_name").val(response.en_name);
+                $("#en_description").val(response.en_description);   
+                
+                $("#ar_name").val(response.ar_name);
+                $("#ar_description").val(response.ar_description);   
+
+ 		        $("#status").val(response.status);
                 $("#category").val(response.category.id);
                 $("#price").val(response.price);
                 $("#edit_id").val(response.id);

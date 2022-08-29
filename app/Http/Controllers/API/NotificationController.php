@@ -1,21 +1,20 @@
 <?php
 
-namespace App\Http\Controllers\Backend;
+namespace App\Http\Controllers\API;
 
+
+use App\Http\Resources\NotificationResource;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\User;
 use Notification;
 use App\Notifications\SendNotification;
 use App\Notifications\OffersNotification;
 
+use Illuminate\Http\Request;
+
 class NotificationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    //
     function __construct()
     {
          $this->middleware('permission:notification-list|notification-create|notification-edit|notification-delete', ['only' => ['index','show']]);
@@ -26,8 +25,7 @@ class NotificationController extends Controller
     public function index()
     {
         //
-        $user = auth()->user();
-        return view('backend.notifications.index',compact( 'user'));
+        return NotificationResource::collection(auth()->user()->notifications);
     }
 
     /**
@@ -38,8 +36,6 @@ class NotificationController extends Controller
     public function create()
     {
         //
-        $user = auth()->user();
-        return $user;
         
     }
 
@@ -75,18 +71,7 @@ class NotificationController extends Controller
     public function show(Request $request, $id)
     {
         //
-        $user = auth()->user();
-        $notifications = $user->notifications()->where('id', $id)->first();
-        $data = [
-            'title_en' => $request->title_en ,
-            'title_ar' => $request->title_ar ,
-            'description_en' => $request->description_en,
-            'description_ar' =>  $request->description_ar,
-        ];
-        $notifications->data =  $data;
-        $res = $notifications->save();
-        return "Updated";
-
+       
        
     }
 
@@ -99,9 +84,7 @@ class NotificationController extends Controller
     public function edit($id)
     {
         //
-        $user = auth()->user();
-        $notifications = $user->notifications()->where('id', $id)->first();
-        return $notifications;
+        return NotificationResource::collection(auth()->user()->notifications);
     }
 
     /**

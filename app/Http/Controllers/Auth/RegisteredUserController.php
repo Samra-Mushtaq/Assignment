@@ -35,7 +35,7 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->phone_no);
+        // dd($request->all());
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'phone_no' => ['required', 'numeric'],

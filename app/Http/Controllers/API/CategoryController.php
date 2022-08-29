@@ -1,19 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Backend;
-
+namespace App\Http\Controllers\API;
+use App\Http\Resources\CategoryResource;
 use App\Http\Controllers\Controller;
 use App\Models\Backend\Category;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-
+    //
     function __construct()
     {
          $this->middleware('permission:category-list|category-create|category-edit|category-delete', ['only' => ['index','show']]);
@@ -21,13 +16,12 @@ class CategoryController extends Controller
          $this->middleware('permission:category-edit', ['only' => ['edit','update']]);
          $this->middleware('permission:category-delete', ['only' => ['destroy']]);
     }
-
     public function index(Request $request)
     {
         //
-        $categories = Category::orderBy('id','DESC')->paginate(5);
-        return view('backend.categories.index',compact('categories'));
-        // ->with('i', ($request->input('page', 1) - 1) * 5);
+      
+        $categories =  CategoryResource::collection(Category::all());
+        return $categories;
             
     }
 
@@ -39,8 +33,6 @@ class CategoryController extends Controller
     public function create()
     {
         //
-        $categories = Category::orderBy('id','DESC')->get();
-        return $categories;
     }
 
     /**
@@ -69,13 +61,8 @@ class CategoryController extends Controller
     public function show(Request $request, $id)
     {
         //
-        $category = Category::find($id);
-        $category->en_name = $request->en_name;
-        $category->ar_name = $request->ar_name;
-        $category->en_detail = $request->en_detail;
-        $category->ar_detail = $request->ar_detail;
-        $res = $category->save();
-        return $res;
+        $category = new CategoryResource(Category::findOrFail($id));
+        return $category;
     }
 
     /**
@@ -87,7 +74,7 @@ class CategoryController extends Controller
     public function edit($id)
     {
         //
-        $category = Category::find($id);
+        $category = new CategoryResource(Category::findOrFail($id));
         return $category;
     }
 

@@ -18,6 +18,7 @@
     },
     "dependencies": {
         "bootstrap": "^4.6.2",
-        "nouislider": "^15.6.1"
+        "nouislider": "^15.6.1",
+        "sweetalert": "^2.1.2"
     }
 }

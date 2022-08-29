@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 
 use DataTables;
@@ -33,7 +34,7 @@ class UserController extends Controller
                     ->make(true);
         }
           
-        return view('backend.user.search');
+        // return view('backend.user.search');
     }
 
     /**
@@ -41,6 +42,8 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+   
+    // Login Apin
     public function create()
     {
         //
@@ -57,6 +60,8 @@ class UserController extends Controller
     public function store(Request $request)
     {
         //
+        $data = User::all();
+        return $data;
     }
 
     /**

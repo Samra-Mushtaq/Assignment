@@ -1,14 +1,18 @@
 @extends('layouts.backend.datatable_app')
 
 @section('content')
-<div class="nk-content ">
+<div class="nk-content p-0">
     <div class="container-fluid">
         <div class="nk-content-inner">
             <div class="nk-content-body">
                 <div class="nk-block nk-block-lg">
                     <div class="nk-block-head">
                         <div class="nk-block-head-content">
-                            <h4 class="nk-block-title">Translations Lists</h4>
+                            <h4 class="nk-block-title">Translations
+                            @can('translation-create')
+                            <a class="btn btn-success ml-4" id="create_translation"> Create New Translation</a>
+                            @endcan
+                            </h4>
                         </div>
                     </div>
                     @if ($message = Session::get('success'))
@@ -16,9 +20,6 @@
                             <p>{{ $message }}</p>
                         </div>
                     @endif
-                    <div class="pull-right pb-3">
-                        <a class="btn btn-success" id="create_translation"> Create New Translation</a>
-                    </div>
                     <div class="card card-preview">
                         <div class="card-inner">
                             <table class="datatable-init table data-table">
@@ -129,7 +130,12 @@
         });
     });
     $(document).on("click", "#create_translation", function(event) { 
-      
+        $("#user").val("");
+        $("#title_en").val("");
+        $("#title_ar").val("");
+        $("#edit_id").val("");
+        $("#description_en").val("");
+        $("#description_ar").val("");
         $("#save_button").removeClass("hidden");
         $("#update_button").addClass("hidden");
         $("#translation_model").modal('show');
@@ -182,21 +188,25 @@
                       description_en : description_en, description_ar: description_ar, title_en : title_en, title_ar: title_ar,
                 },
                 success: function (response) {
+                    
+                    $("#translation_model").modal('hide');
                     if(value == 0){
-                        $("#msg").html("Translation Successfully Added");
-                        $("#message_model").modal('show');
+                        swal("Translation Alert", "Translation Successfully Created", "success").then((value) => {
+                            location.reload();
+                        });
                     }else{
-                        $("#msg").html("Translation Successfully Updated");
-                        $("#message_model").modal('show');
+                        swal("Translation Alert", "Translation Successfully Updated", "success").then((value) => {
+                            location.reload();
+                        });
                     }
                   
                 },
                 error: function (response) {
-                    $("#msg").html("Something Went wrong");
-                    $("#message_model").modal('show');
+                    swal("Translation Alert", "Something Wents Wrong", "error").then((value) => {
+                        // location.reload();
+                    });
                 }
             });     
-            $("#translation_model").modal('hide');
             $("#user").val("");
             $("#title_en").val("");
             $("#title_ar").val("");

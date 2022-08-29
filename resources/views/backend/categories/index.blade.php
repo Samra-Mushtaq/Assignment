@@ -1,14 +1,18 @@
 @extends('layouts.backend.datatable_app')
 
 @section('content')
-<div class="nk-content ">
+<div class="nk-content p-0">
     <div class="container-fluid">
         <div class="nk-content-inner">
             <div class="nk-content-body">
                 <div class="nk-block nk-block-lg">
                     <div class="nk-block-head">
                         <div class="nk-block-head-content">
-                            <h4 class="nk-block-title">Category Lists</h4>
+                            <h4 class="nk-block-title">Category
+                            @can('category-create')
+                                <a class="btn btn-success ml-4" id="create_category"> Create New Category</a>
+                            @endcan
+                            </h4>
                         </div>
                     </div>
                     @if ($message = Session::get('success'))
@@ -16,17 +20,16 @@
                             <p>{{ $message }}</p>
                         </div>
                     @endif
-                    <div class="pull-right pb-3">
-                        <a class="btn btn-success" id="create_category"> Create New Category</a>
-                    </div>
                     <div class="card card-preview">
                         <div class="card-inner">
                             <table class="datatable-init table data-table">
                                 <thead>
                                     <tr>
                                         <th>S.No</th>
-                                        <th>Name</th>
-                                        <th>Detail</th>
+                                        <th>Name (en)</th>
+                                        <th>Name (ar)</th>
+                                        <th>Detail (en)</th>
+                                        <th>Detail (ar)</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -34,12 +37,17 @@
                                     @foreach ($categories as $key => $category)
                                     <tr>
                                         <td>{{ ++$key }}</td>
-                                        <td>{{ $category->name }}</td>
-                                        <td>{{ $category->detail }}</td>
+                                        <td>{{ $category->en_name }}</td>
+                                        <td>{{ $category->ar_name }}</td>
+                                        <td>{{ $category->en_detail }}</td>
+                                        <td>{{ $category->ar_detail }}</td>
                                         <td>
+                                        @can('category-edit')
                                             <a class="btn btn-primary" onclick="edit_category('{{$category->id}}')">Edit</a>
+                                        @endcan
+                                        @can('category-delete')   
                                             <a class="btn btn-danger" onclick="delete_category('{{$category->id}}')">Delete</a>
-                                        
+                                        @endcan
                                         </td>
                                     </tr>
                                     @endforeach
@@ -66,15 +74,27 @@
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label class="form-label" for="name"> Name</label>
+                    <label class="form-label" for="en_name"> Name (en)</label>
                     <div class="form-control-wrap">
-                        <input type="text" class="form-control" id="name" required>
+                        <input type="text" class="form-control" id="en_name" required>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label" for="detail">Detail</label>
+                    <label class="form-label" for="ar_name"> Name (ar)</label>
                     <div class="form-control-wrap">
-                        <textarea class="form-control" id="detail"></textarea>
+                        <input type="text" class="form-control" id="ar_name" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="en_detail">Detail (en)</label>
+                    <div class="form-control-wrap">
+                        <textarea class="form-control" id="en_detail"></textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="ar_detail">Detail (ar)</label>
+                    <div class="form-control-wrap">
+                        <textarea class="form-control" id="ar_detail"></textarea>
                     </div>
                 </div>
                 <div class="form-group">
@@ -116,28 +136,48 @@
         });
     });
     $(document).on("click", "#create_category", function(event) { 
-      
+        $("#en_name").val("");
+        $("#en_detail").val("");
+        $("#ar_name").val("");
+        $("#ar_detail").val("");
+        $("#edit_id").val("");
         $("#save_button").removeClass("hidden");
         $("#update_button").addClass("hidden");
         $("#category_model").modal('show');
     });
     function category_information(value){
         err_res = 0;
-        var name = $("#name").val();
-        var detail = $("#detail").val();
-        if (name == '' || name == null) {
-            $('#name').css("border-color", "red");
+        var en_name = $("#en_name").val();
+        var en_detail = $("#en_detail").val();
+        var ar_name = $("#ar_name").val();
+        var ar_detail = $("#ar_detail").val();
+        if (en_name == '' || en_name == null) {
+            $('#en_name').css("border-color", "red");
             err_res = 1;
         }
         else{
-            $('#name').css("border-color", "#dfdfdf");
+            $('#en_name').css("border-color", "#dfdfdf");
         }
-        if (detail == '' || detail == null) {
-            $('#detail').css("border-color", "red");
+        if (ar_name == '' || ar_name == null) {
+            $('#ar_name').css("border-color", "red");
             err_res = 1;
         }
         else{
-            $('#detail').css("border-color", "#dfdfdf");
+            $('#ar_name').css("border-color", "#dfdfdf");
+        }
+        if (en_detail == '' || en_detail == null) {
+            $('#en_detail').css("border-color", "red");
+            err_res = 1;
+        }
+        else{
+            $('#en_detail').css("border-color", "#dfdfdf");
+        }
+        if (ar_detail == '' || ar_detail == null) {
+            $('#ar_detail').css("border-color", "red");
+            err_res = 1;
+        }
+        else{
+            $('#ar_detail').css("border-color", "#dfdfdf");
         }
         if(err_res == 0){
             if(value == 0){
@@ -152,34 +192,43 @@
                 type: ajax_type,
                 url: ajax_url,
                 data: {
-                     name : name, detail : detail
+                     en_name : en_name, en_detail : en_detail,  ar_name : ar_name, ar_detail : ar_detail
                 },
                 success: function (response) {
+                    
+                     $("#category_model").modal('hide');
                     if(value == 0){
-                        $("#msg").html("Category Successfully Created");
-                        $("#message_model").modal('show');
+                        // $("#msg").html("Category Successfully Created");
+                        // $("#message_model").modal('show');
+                        swal("Category Alert", "Category Successfully Created", "success").then((value) => {
+                            location.reload();
+                        });
                     }else{
-                        $("#msg").html("Category Successfully Updated");
-                        $("#message_model").modal('show');
+                        // $("#msg").html("Category Successfully Updated");
+                        // $("#message_model").modal('show');
+                        swal("Category Alert", "Category Successfully Updated", "success").then((value) => {
+                            location.reload();
+                        });
                     }
                   
                 },
                 error: function (response) {
                     // $('#email').css("border-color", "red");
-                    $("#msg").html("Something Went wrong");
-                    $("#message_model").modal('show');
+                    // $("#msg").html("Something Went wrong");
+                    // $("#message_model").modal('show');
+                    swal("Category Alert", "Something Went Wrong", "error").then((value) => {
+                        location.reload();
+                    });
                 }
-            });     
-            $("#name").val("");
-            $("#detail").val("");
-            $("#edit_id").val("");
-            $("#category_model").modal('hide');
+            });    
         }
         
     }
     function close_model(){
-        $("#name").val("");
-        $("#detail").val("");
+        $("#en_name").val("");
+        $("#en_detail").val("");
+        $("#ar_name").val("");
+        $("#ar_detail").val("");
         $("#edit_id").val("");
         $("#category_model").modal('hide');
     }
@@ -195,8 +244,11 @@
             },
             success: function (response) {
                 
-                $("#name").val(response.name);
-                $("#detail").val(response.detail);
+                $("#en_name").val(response.en_name);
+                $("#en_detail").val(response.en_detail);
+                $("#ar_name").val(response.ar_name);
+                $("#ar_detail").val(response.ar_detail);
+
                 $("#edit_id").val(response.id);
                 $("#category_model").modal('show');
                 $("#save_button").addClass("hidden");

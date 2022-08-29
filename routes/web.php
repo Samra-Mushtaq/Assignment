@@ -31,7 +31,7 @@ Route::get('/users-info', function () {
 require __DIR__.'/auth.php';
 
  
-Route::get('/search-users', 'App\Http\Controllers\Backend\UserController@index')->name('searchusers.index');
+// Route::get('/search-users', 'App\Http\Controllers\Backend\UserController@index')->name('searchusers.index');
 
 
 Route::group(['middleware' => ['auth']], function() {

@@ -1,14 +1,19 @@
 @extends('layouts.backend.datatable_app')
 
 @section('content')
-<div class="nk-content ">
+<div class="nk-content p-0">
     <div class="container-fluid">
         <div class="nk-content-inner">
             <div class="nk-content-body">
                 <div class="nk-block nk-block-lg">
                     <div class="nk-block-head">
                         <div class="nk-block-head-content">
-                            <h4 class="nk-block-title">Notifications List</h4>
+                            <h4 class="nk-block-title">
+                                Notifications
+                                @can('product-create')
+                                <a class="btn btn-success ml-4" id="create_notification"> Create New Notification</a>
+                                @endcan
+                            </h4>
                         </div>
                     </div>
                     @if ($message = Session::get('success'))
@@ -16,19 +21,16 @@
                             <p>{{ $message }}</p>
                         </div>
                     @endif
-                    <div class="pull-right pb-3">
-                        <a class="btn btn-success" id="create_notification"> Create New Notification</a>
-                    </div>
                     <div class="card card-preview">
                         <div class="card-inner">
                             <table class="datatable-init table data-table">
                                 <thead>
                                     <tr>
                                         <th>S.No</th>
-                                        <th>Arabic Title</th>
-                                        <th>Arabic Description</th>
-                                        <th>English Title</th>
-                                        <th>English Description</th>
+                                        <th>Title (en)</th>
+                                        <th>Title (ar)</th>
+                                        <th>Description (en)</th>
+                                        <th>Description (ar)</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -55,7 +57,6 @@
     </div>
 </div>
 
-
 <div class="modal fade" id="notification_model">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -68,25 +69,27 @@
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label class="form-label" for="title_en">English Title</label>
+                    <label class="form-label" for="title_en">Title (en)</label>
                     <div class="form-control-wrap">
                         <input type="text" class="form-control" name="title_en" id="title_en" required>
                     </div>
                 </div>
+                
                 <div class="form-group">
-                    <label class="form-label" for="description_en">English Description</label>
-                    <div class="form-control-wrap">
-                        <textarea class="form-control"  name="description_en"  id="description_en"></textarea>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="title_ar">Arabic Title</label>
+                    <label class="form-label" for="title_ar"> Title (ar)</label>
                     <div class="form-control-wrap">
                         <input type="text" class="form-control" name="title_ar" id="title_ar" required>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label" for="description_ar">Arabic Description</label>
+                    <label class="form-label" for="description_en">Description (en)</label>
+                    <div class="form-control-wrap">
+                        <textarea class="form-control"  name="description_en"  id="description_en"></textarea>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="description_ar"> Description (ar)</label>
                     <div class="form-control-wrap">
                         <textarea class="form-control"  name="description_ar"  id="description_ar"></textarea>
                     </div>
@@ -129,7 +132,12 @@
         });
     });
     $(document).on("click", "#create_notification", function(event) { 
-      
+        $("#user").val("");
+        $("#title_en").val("");
+        $("#title_ar").val("");
+        $("#edit_id").val("");
+        $("#description_en").val("");
+        $("#description_ar").val("");
         $("#save_button").removeClass("hidden");
         $("#update_button").addClass("hidden");
         $("#notification_model").modal('show');
@@ -182,12 +190,19 @@
                       description_en : description_en, description_ar: description_ar, title_en : title_en, title_ar: title_ar,
                 },
                 success: function (response) {
+                    $("#notification_model").modal('hide');
                     if(value == 0){
-                        $("#msg").html("Notification Successfully Added");
-                        $("#message_model").modal('show');
+                        swal("Notification Alert", "Notification Successfully Added", "success").then((value) => {
+                            location.reload();
+                        });
+                        // $("#msg").html("Notification Successfully Added");
+                        // $("#message_model").modal('show');
                     }else{
-                        $("#msg").html("Notification Successfully Updated");
-                        $("#message_model").modal('show');
+                        swal("Notification Alert", "Notification Successfully Updated", "success").then((value) => {
+                            location.reload();
+                        });
+                        // $("#msg").html("Notification Successfully Updated");
+                        // $("#message_model").modal('show');
                     }
                   
                 },
@@ -197,13 +212,6 @@
                     $("#message_model").modal('show');
                 }
             });     
-            $("#notification_model").modal('hide');
-            $("#user").val("");
-            $("#title_en").val("");
-            $("#title_ar").val("");
-            $("#edit_id").val("");
-            $("#description_en").val("");
-            $("#description_ar").val("");
         }
         
     }

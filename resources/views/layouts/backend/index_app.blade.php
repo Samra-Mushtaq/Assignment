@@ -30,7 +30,7 @@
                 @include('layouts.backend.partials.header')
                 <!-- main header @e -->
                 <!-- content @s -->
-                <div class="nk-content ">
+                <div class="nk-content  p-4">
                 @yield('content')
                 </div>
                 <!-- content @e -->
@@ -55,7 +55,7 @@
             var table = $('.data-table').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('searchusers.index') }}",
+                ajax: APP_URL + "/users",
                 columns: [
                     {data: 'id', name: 'id'},
                     {data: 'name', name: 'name'},
