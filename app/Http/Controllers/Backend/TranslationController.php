@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Models\Backend\Translation;
 use Illuminate\Http\Request;
+use Spatie\TranslationLoader\LanguageLine;
 
 class TranslationController extends Controller
 {
@@ -16,6 +17,16 @@ class TranslationController extends Controller
     public function index()
     {
         //
+        // LanguageLine::create([
+        //     'group' => 'validation',
+        //     'key' => 'required',
+        //     'text' => ['en' => 'This is a required field', 'ar' => 'Dit is een verplicht veld'],
+        //  ]);
+        $translations = LanguageLine::all();
+        return view('backend.translations.index',compact( 'translations'));
+
+
+        //  dd($language[0]->text["en"]);
     }
 
     /**
@@ -37,6 +48,25 @@ class TranslationController extends Controller
     public function store(Request $request)
     {
         //
+        $data = [
+            'title_en' => $request->title_en ,
+            'title_ar' => $request->title_ar ,
+            'description_en' => $request->description_en,
+            'description_ar' =>  $request->description_ar,
+        ];
+        $key = $request->title_en . ' '. $request->title_ar;
+        LanguageLine::create([
+            'group' => 'translation',
+            'key' => $key,
+            'text' => $data,
+        ]);
+
+        // trans('translation.key'); // returns 
+
+        // app()->setLocale('textkey');
+
+        // trans('validation.required'); // 
+        return 1;
     }
 
     /**
@@ -45,9 +75,20 @@ class TranslationController extends Controller
      * @param  \App\Models\Backend\Translation  $translation
      * @return \Illuminate\Http\Response
      */
-    public function show(Translation $translation)
+    public function show(Request $request, $id)
     {
         //
+        $translation = LanguageLine::where('id', $id)->first();
+        $key = $request->title_en . ' '. $request->title_ar;
+        $data = [
+            'title_en' => $request->title_en ,
+            'title_ar' => $request->title_ar ,
+            'description_en' => $request->description_en,
+            'description_ar' =>  $request->description_ar,
+        ];
+        $translation->key = $key;
+        $translation->text = $data;
+        $res = $translation->save();
     }
 
     /**
@@ -56,9 +97,11 @@ class TranslationController extends Controller
      * @param  \App\Models\Backend\Translation  $translation
      * @return \Illuminate\Http\Response
      */
-    public function edit(Translation $translation)
+    public function edit($id)
     {
         //
+        $translations = LanguageLine::where('id', $id)->first();
+        return $translations;
     }
 
     /**
@@ -68,7 +111,7 @@ class TranslationController extends Controller
      * @param  \App\Models\Backend\Translation  $translation
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Translation $translation)
+    public function update(Request $request, $id)
     {
         //
     }
@@ -79,8 +122,10 @@ class TranslationController extends Controller
      * @param  \App\Models\Backend\Translation  $translation
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Translation $translation)
+    public function destroy($id)
     {
         //
+        $translations = LanguageLine::where('id', $id)->delete();
+        return $translations;
     }
 }
