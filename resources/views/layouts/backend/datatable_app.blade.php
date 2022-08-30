@@ -18,6 +18,7 @@
     var APP_URL = {!! json_encode(url('/')) !!};
     
 </script>
+<!-- @vite(['resources/js/backend/common.js']) -->
 <body class="nk-body bg-lighter npc-default has-sidebar ">
     <div class="nk-app-root">
         <!-- main @s -->
@@ -40,6 +41,32 @@
                 @include('layouts.backend.partials.footer')
                 </div>
                 <!-- footer @e -->
+                <div class="modal fade bd-example-modal-lg" id="ajax_general_model"  tabindex="-1" role="dialog"  aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title text-capitalize" id="ajax_model_title">Modal title</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="tab-content" id="ajax_model_inner_content">
+
+                                </div>
+                                <div id="ajax_model_spinner">
+                                    <div class="modal-body">
+                                        <div class="spinner" style="text-align: center;">
+                                            <div class="bounce1"></div>
+                                            <div class="bounce2"></div>
+                                            <div class="bounce3"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <!-- wrap @e -->
         </div>

@@ -11,6 +11,8 @@
                             <h4 class="nk-block-title">Category
                             @can('category-create')
                                 <a class="btn btn-success ml-4" id="create_category"> Create New Category</a>
+                                <!-- <button type="button" class="btn btn-success ml-4" data-act="ajax-modal"
+                                    data-method="get" data-action-url="{{ route('categories.create') }}" data-title="Create New Category">Create New Category</button> -->
                             @endcan
                             </h4>
                         </div>
@@ -43,10 +45,10 @@
                                         <td>{{ $category->ar_detail }}</td>
                                         <td>
                                         @can('category-edit')
-                                            <a class="btn btn-primary" onclick="edit_category('{{$category->id}}')">Edit</a>
+                                            <a class="btn btn-primary mb-2" onclick="edit_category('{{$category->id}}')">Edit</a>
                                         @endcan
                                         @can('category-delete')   
-                                            <a class="btn btn-danger" onclick="delete_category('{{$category->id}}')">Delete</a>
+                                            <a class="btn btn-danger mb-2" onclick="delete_category('{{$category->id}}')">Delete</a>
                                         @endcan
                                         </td>
                                     </tr>
@@ -198,14 +200,10 @@
                     
                      $("#category_model").modal('hide');
                     if(value == 0){
-                        // $("#msg").html("Category Successfully Created");
-                        // $("#message_model").modal('show');
                         swal("Category Alert", "Category Successfully Created", "success").then((value) => {
                             location.reload();
                         });
                     }else{
-                        // $("#msg").html("Category Successfully Updated");
-                        // $("#message_model").modal('show');
                         swal("Category Alert", "Category Successfully Updated", "success").then((value) => {
                             location.reload();
                         });
@@ -213,9 +211,6 @@
                   
                 },
                 error: function (response) {
-                    // $('#email').css("border-color", "red");
-                    // $("#msg").html("Something Went wrong");
-                    // $("#message_model").modal('show');
                     swal("Category Alert", "Something Went Wrong", "error").then((value) => {
                         location.reload();
                     });

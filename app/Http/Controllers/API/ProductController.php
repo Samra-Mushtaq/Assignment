@@ -3,151 +3,67 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Resources\ProductResource;
+use App\Http\Resources\SearchProductResource;
+use App\Http\Resources\SearchCategoryResource;
 use App\Http\Controllers\Controller;
 use App\Models\Backend\Product;
+use App\Models\Backend\Category;
+use File;
+use Image;
+use Illuminate\Support\Facades\Storage;
 
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    //
-    function __construct()
-    {
-         $this->middleware('permission:product-list|product-create|product-edit|product-delete', ['only' => ['index','show']]);
-         $this->middleware('permission:product-create', ['only' => ['create','store']]);
-         $this->middleware('permission:product-edit', ['only' => ['edit','update']]);
-         $this->middleware('permission:product-delete', ['only' => ['destroy']]);
-    }
     public function index(Request $request)
     {
-        //
-        $products =  ProductResource::collection(Product::with('category')->get());
+        $products =  ProductResource::collection(Product::with('category')->paginate(10));
         return $products;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function search(Request $request)
     {
-        //
+        $language = $request->header('Accept-Language');
+        $product_name = $request->product_name; 
+        $category_name = $request->category_name; 
+        $price = $request->price;
+        $sort = 'asc';
+        if(isset($request->sort)){
+          $sort = $request->sort;
+        }
+        if($language == "ar"){
+            $name = 'ar_name';
+        }else {
+            $name = 'en_name';
+        }
+        $product_data = search_function($name, $language, $product_name , $category_name, $price, $sort);
+        if(!isset($product_name) && isset($category_name)){
+            $data = SearchCategoryResource::collection($product_data);
+        }else{
+            $data = SearchProductResource::collection($product_data);
+        }
+        return $data;
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        // dd($request->all());
-        if(isset($request->image)){
-            $image      = $request->file('image');
-            $filename  = time() . '.' . $image->getClientOriginalExtension();
-            $img = Image::make($image->getRealPath());
-            $img->resize(40, 40, function ($constraint) {
-                $constraint->aspectRatio();                 
-            });
-
-            $img->stream(); // <-- Key point
-
-            //dd();
-            Storage::disk('local')->put('public'.'/'.$filename, $img, 'public');
-        }else{
-            $filename  = ""; 
-        } 
-        // dd($filename);
-        $Product = Product::create([
-            'en_name' => $request->en_name,
-            'ar_name' => $request->ar_name,
-            'en_description' => $request->en_description,
-            'ar_description' => $request->ar_description,
-            'category_id' => $request->category,
-            'status' => $request->status,
-            'price' => $request->price,
-            'image' => $filename,
-        ]);
-        return "Added";
+      
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Backend\Product  $Product
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Request $request)
+    public function show($id)
     {
-        //
-       
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Backend\Product  $Product
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
         $product = new ProductResource(Product::findOrFail($id));
         return $product;
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Backend\Product  $Product
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request)
     {
-        $id = $request->id;
-        if(isset($request->image)){
-            $image      = $request->file('image');
-            $filename  = time() . '.' . $image->getClientOriginalExtension();
-            $img = Image::make($image->getRealPath());
-            $img->resize(40, 40, function ($constraint) {
-                $constraint->aspectRatio();                 
-            });
-
-            $img->stream(); // <-- Key point
-
-            //dd();
-            Storage::disk('local')->put('public'.'/'.$filename, $img, 'public');
-        }
-        $product = Product::find($id);
-        $product->en_name = $request->en_name;
-        $product->en_description = $request->en_description;
-        $product->ar_name = $request->ar_name;
-        $product->ar_description = $request->ar_description;
-        $product->category_id = $request->category;
-        $product->status = $request->status;
-        $product->price = $request->price;
-        if(isset($request->image)){
-            $product->image = $filename;
-        }
-        $res = $product->save();
-        return "Updated";
+      
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Backend\Product  $Product
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
-        //
-        $product = Product::find($id);
-        $res = $product->delete();
-        return "Deleted";
-
+       
     }
 }

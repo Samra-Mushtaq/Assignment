@@ -11,48 +11,29 @@ use App\Notifications\OffersNotification;
 
 class NotificationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     function __construct()
     {
-         $this->middleware('permission:notification-list|notification-create|notification-edit|notification-delete', ['only' => ['index','show']]);
-         $this->middleware('permission:notification-create', ['only' => ['create','store']]);
-         $this->middleware('permission:notification-edit', ['only' => ['edit','update']]);
-         $this->middleware('permission:notification-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:notification-list|notification-create|notification-edit|notification-delete', ['only' => ['index','show']]);
+        $this->middleware('permission:notification-create', ['only' => ['create','store']]);
+        $this->middleware('permission:notification-edit', ['only' => ['edit','update']]);
+        $this->middleware('permission:notification-delete', ['only' => ['destroy']]);
     }
     public function index()
     {
-        //
         $user = auth()->user();
         return view('backend.notifications.index',compact( 'user'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
-        //
         $user = auth()->user();
         return $user;
         
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
-        // $user = User::find($request->user);
         $user = auth()->user();
         $data = [
             'user' => $user->id,
@@ -66,15 +47,8 @@ class NotificationController extends Controller
         return "Added";
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Backend\Notification  $notification
-     * @return \Illuminate\Http\Response
-     */
     public function show(Request $request, $id)
     {
-        //
         $user = auth()->user();
         $notifications = $user->notifications()->where('id', $id)->first();
         $data = [
@@ -86,34 +60,18 @@ class NotificationController extends Controller
         $notifications->data =  $data;
         $res = $notifications->save();
         return "Updated";
-
        
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Backend\Notification  $notification
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
-        //
         $user = auth()->user();
         $notifications = $user->notifications()->where('id', $id)->first();
         return $notifications;
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Backend\Notification  $notification
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
-        //
         $user = auth()->user();
         $notifications = $user->notifications()->where('id', $id)->first();
         $data = [
@@ -127,15 +85,8 @@ class NotificationController extends Controller
         return "Updated";
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Backend\Notification  $notification
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
-        //
         $user = auth()->user();
         $res = $user->notifications()->where('id', $id)->delete();
         return "Deleted";

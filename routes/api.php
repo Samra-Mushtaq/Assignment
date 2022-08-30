@@ -13,17 +13,17 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-// Route::post('/login', [RegisteredUserController::class, 'store']);
 
 Route::post('login', 'App\Http\Controllers\API\UserController@login');
-Route::post('/register', 'App\Http\Controllers\API\UserController@store');
 
-Route::resource('products', 'App\Http\Controllers\API\ProductController')->middleware('auth:sanctum');
-Route::resource('categories', 'App\Http\Controllers\API\CategoryController')->middleware('auth:sanctum');
-
-Route::resource('translations', 'App\Http\Controllers\API\TranslationController')->middleware('auth:sanctum');
-Route::resource('notifications', 'App\Http\Controllers\API\NotificationController')->middleware('auth:sanctum');
-// Route::post('/register', [RegisteredUserController::class, 'store']);
+Route::group(['middleware' => ['auth:sanctum']], function() {
+    Route::post('register', 'App\Http\Controllers\API\UserController@store');
+    Route::post('search-api', 'App\Http\Controllers\API\ProductController@search');
+    Route::apiResource('products', 'App\Http\Controllers\API\ProductController');
+    Route::apiResource('categories', 'App\Http\Controllers\API\CategoryController');
+    Route::apiResource('translations', 'App\Http\Controllers\API\TranslationController');
+    Route::apiResource('notifications', 'App\Http\Controllers\API\NotificationController');
+});
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

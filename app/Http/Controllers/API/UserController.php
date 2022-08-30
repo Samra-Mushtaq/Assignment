@@ -10,13 +10,13 @@ use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
-    //
+    
     // public function index(Request $request)
     // {
-    //     //
     //     $data = User::all();
     //     return $data;
     // }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -40,21 +40,20 @@ class UserController extends Controller
 
 
     public function login(Request $request){
+        
         $user= User::where('email', $request->email)->first();
-        // print_r($data);
-        // return($user);
-            if (!$user || !Hash::check($request->password, $user->password)) {
-                return response([
-                    'message' => ['These credentials do not match our records.']
-                ], 404);
-            }
-        
-            $token = $user->createToken('my-app-token')->plainTextToken;
-        
-            $response = [
-                'user' => $user,
-                'token' => $token
-            ];
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return response([
+                'message' => ['These credentials do not match our records.']
+            ], 404);
+        }
+    
+        $token = $user->createToken('my-app-token')->plainTextToken;
+    
+        $response = [
+            'user' => $user,
+            'token' => $token
+        ];
         
         return response($response, 201);
     }

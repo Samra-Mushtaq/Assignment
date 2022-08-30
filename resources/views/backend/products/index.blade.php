@@ -41,9 +41,11 @@
                                     @foreach ($products as $key => $product)
                                     <tr>
                                         <td>{{ ++$key }}</td>
-                                        <td><span class="tb-product">
-                                                            <img src="{{ asset('storage/' . $product->image) }}" alt="" class="thumb">
-                                                        </span>{{ $product->en_name }}</td>
+                                        <td>
+                                            <span class="tb-product">
+                                                <img src="{{ asset('storage/' . $product->image) }}" alt="" class="thumb">
+                                            </span>
+                                        {{ $product->en_name }}</td>
                                         <td>{{ $product->ar_name }}</td>
                                         <td>{{ $product->en_description }}</td>
                                         <td>{{ $product->ar_description }}</td>
@@ -258,15 +260,17 @@
         
         if(err_res == 0){
             event.preventDefault();
-            var formData = new FormData(this);
             id = $("#edit_id").val();
+            $("#form_data").append('<input type="hidden" class="put_field" name="_method" value="PUT">');
             if(id == ""){
                 ajax_url = APP_URL + "/products";
                 ajax_type = "POST";
+                $(".put_field").remove();
             }else{
-                ajax_url = APP_URL + "/products_update";
+                ajax_url = APP_URL + "/products/"+id;
                 ajax_type = "POST";
             }
+            var formData = new FormData(this);
             $.ajax({
                 url: ajax_url,
                 method:ajax_type,
@@ -294,9 +298,9 @@
                 },
                 error: function(data)
                 {
-                    swal("Product Alert", "Something Went Wrong", "error").then((value) => {
-                        location.reload();
-                    });
+                    // swal("Product Alert", "Something Went Wrong", "error").then((value) => {
+                    //     location.reload();
+                    // });
                     // console.log(data);
                     // $("#msg").html("Something Went wrong");
                     // $("#message_model").modal('show');

@@ -9,54 +9,29 @@ use Spatie\TranslationLoader\LanguageLine;
 
 class TranslationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     function __construct()
     {
-         $this->middleware('permission:translation-list|translation-create|translation-edit|translation-delete', ['only' => ['index','show']]);
-         $this->middleware('permission:translation-create', ['only' => ['create','store']]);
-         $this->middleware('permission:translation-edit', ['only' => ['edit','update']]);
-         $this->middleware('permission:translation-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:translation-list|translation-create|translation-edit|translation-delete', ['only' => ['index','show']]);
+        $this->middleware('permission:translation-create', ['only' => ['create','store']]);
+        $this->middleware('permission:translation-edit', ['only' => ['edit','update']]);
+        $this->middleware('permission:translation-delete', ['only' => ['destroy']]);
     }
     public function index()
     {
-        //
-        // LanguageLine::create([
-        //     'group' => 'validation',
-        //     'key' => 'required',
-        //     'text' => ['en' => 'This is a required field', 'ar' => 'Dit is een verplicht veld'],
-        //  ]);
         $translations = LanguageLine::all();
         return view('backend.translations.index',compact( 'translations'));
 
-
-        //  dd($language[0]->text["en"]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
-        //
         $translations = LanguageLine::all();
         return $translations;
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
         $data = [
             'title_en' => $request->title_en ,
             'title_ar' => $request->title_ar ,
@@ -69,24 +44,15 @@ class TranslationController extends Controller
             'key' => $key,
             'text' => $data,
         ]);
-
-        // trans('translation.key'); // returns 
-
+        // trans('translation.key'); // 
         // app()->setLocale('textkey');
-
         // trans('validation.required'); // 
-        return "Added";
+        return 1;
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Backend\Translation  $translation
-     * @return \Illuminate\Http\Response
-     */
+    
     public function show(Request $request, $id)
     {
-        //
         $translation = LanguageLine::where('id', $id)->first();
         $key = $request->title_en . ' '. $request->title_ar;
         $data = [
@@ -100,26 +66,12 @@ class TranslationController extends Controller
         $res = $translation->save();
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Backend\Translation  $translation
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
-        //
         $translations = LanguageLine::where('id', $id)->first();
         return $translations;
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Backend\Translation  $translation
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
         //
@@ -134,18 +86,11 @@ class TranslationController extends Controller
         $translation->key = $key;
         $translation->text = $data;
         $res = $translation->save();
-        return "Updated";
+        return 1;
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Backend\Translation  $translation
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
-        //
         $translations = LanguageLine::where('id', $id)->delete();
         return "Deleted";
     }

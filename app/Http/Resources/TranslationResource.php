@@ -14,8 +14,13 @@ class TranslationResource extends JsonResource
      */
     public function toArray($request)
     {
+        $text_array = $this->text;
+        $en_array = ["title"=> $text_array["title_en"], "description" => $text_array["description_en"]];
+        $ar_array = ["title"=> $text_array["title_ar"], "description" => $text_array["description_ar"]];
+
         return [
-            'text' => $this->text,
+            'en' => $en_array,
+            'ar' => $ar_array,
         ];
     }
 }
