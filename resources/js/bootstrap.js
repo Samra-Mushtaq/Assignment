@@ -2,7 +2,7 @@ import _ from 'lodash';
 import 'bootstrap';
 // window.$ = window.jQuery = require('jquery');
 window.$ = window.jQuery = require('jquery')
-
+window.toastr = require('toastr');
 window._ = _;
 
 /**

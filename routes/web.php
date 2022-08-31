@@ -28,6 +28,12 @@ Route::get('/users-info', function () {
 require __DIR__.'/auth.php';
 
 Route::group(['middleware' => ['auth']], function() {
+    
+    Route::get('categories-datatable', 'App\Http\Controllers\Backend\CategoryController@datatable')->name('categories-datatable');
+    Route::get('products-datatable', 'App\Http\Controllers\Backend\ProductController@datatable')->name('products-datatable');
+    Route::get('notifications-datatable', 'App\Http\Controllers\Backend\NotificationController@datatable')->name('notifications-datatable');
+    Route::get('translations-datatable', 'App\Http\Controllers\Backend\TranslationController@datatable')->name('translations-datatable');
+
     Route::resource('roles', 'App\Http\Controllers\Backend\RoleController');
     Route::resource('users', 'App\Http\Controllers\Backend\UserController');
     Route::resource('products', 'App\Http\Controllers\Backend\ProductController');

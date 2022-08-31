@@ -9,7 +9,10 @@
     <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap5.min.js"></script>
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <!-- <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script> -->
+
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 </head>
 
 <script>
@@ -18,7 +21,9 @@
     var APP_URL = {!! json_encode(url('/')) !!};
     
 </script>
-<!-- @vite(['resources/js/backend/common.js']) -->
+
+@vite(['resources/js/backend/common.js'])
+
 <body class="nk-body bg-lighter npc-default has-sidebar ">
     <div class="nk-app-root">
         <!-- main @s -->
@@ -46,7 +51,7 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title text-capitalize" id="ajax_model_title">Modal title</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <button type="button" class="close close_model" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
@@ -72,21 +77,7 @@
         </div>
         <!-- main @e -->
     </div>
-    <!-- @vite(['resources/js/app.js']) -->
-    <!-- app-root @e -->
-    <!-- select region modal -->
-    <!-- .modal -->
-    <!-- JavaScript -->
 
-    <script type="text/javascript">
-        $(function () {
-            
-            var table = $('.data-table').DataTable({
-                processing: true,
-            });
-            
-        });
-    </script>
 </body>
 </html>
 

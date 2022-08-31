@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Models\Backend\Category;
 use Illuminate\Http\Request;
+use App\Http\Requests\CategoryRequest;
+
+use DataTables;
 
 class CategoryController extends Controller
 {
@@ -19,87 +22,103 @@ class CategoryController extends Controller
 
     public function index(Request $request)
     {
-        $categories = Category::orderBy('id','DESC')->paginate(5);
-        return view('backend.categories.index',compact('categories'));
+        return view('backend.categories.index');
             
     }
 
-    // public function dataTable () {
-    //     $products = Product::orderBy('id', 'desc'); 
-    //     return Datatables::of($products)
-    //         ->addIndexColumn()
-    //         ->addColumn('actions', function ($record) {
-    //             $actions = '';
-    //             if(auth()->user()->hasPermissionTo('product-edit')) {
-    //                 $actions .= '<button class="btn btn-primary mb-2" data-act="ajax-modal" data-method="get"
-    //                         data-action-url="'. route('categories.edit', $record->id). '" data-title="Edit Category"
-    //                         data-toggle="tooltip" data-placement="top" title="Edit Category">
-    //                             <i class="ri-pencil-fill mr-2"></i>Edit
-    //                         </a>';
-    //             }
-    //             if(auth()->user()->hasPermissionTo('product-delete')) {
-    //                 $actions .= '<a class="dropdown-item delete" href="javascript:void(0)" data-table="categories-table" data-method="get"
-    //                         data-url="' .route('categories.destroy', $record->id). '" data-toggle="tooltip" data-placement="top" title="Delete Category">
-    //                             <i class="ri-delete-bin-6-fill mr-2"></i>Delete
-    //                         </a>';
-    //             }
-    //             return $actions;
-    //         })
-    //         ->rawColumns(['actions'])->make(true);
-    // }
+    public function dataTable () {
+        $categories = Category::orderBy('id', 'desc'); 
+        return Datatables::of($categories)
+            ->addIndexColumn()
+            ->addColumn('actions', function ($record) {
+                $actions = '';
+                if(auth()->user()->hasPermissionTo('category-edit')) {
+                    $actions .= '<button class="btn btn-primary mr-1 p-1" data-act="ajax-modal" data-method="get"
+                            data-action-url="'. route('categories.edit', $record->id). '" data-title="Edit Category"
+                            data-toggle="tooltip" data-placement="top" title="Edit Category">
+                                Edit
+                            </button>';
+                }
+                if(auth()->user()->hasPermissionTo('category-delete')) {
+                    $actions .= '<a class="btn btn-danger delete p-1" data-table="categories-table" data-method="get"
+                            data-url="' .route('categories.destroy', $record->id). '" data-toggle="tooltip" data-placement="top" title="Delete Category">
+                                Delete
+                            </a>';
+                }
+                return $actions;
+            })
+            ->rawColumns(['actions'])->make(true);
+    }
     
     public function create()
     {
-        // $categories = Category::orderBy('id','DESC')->get();
-        // return $categories;
-        // dd("dd");
-        return view('backend.categories.model-content');
+        return view('backend.categories.model');
     }
 
-    public function store(Request $request)
+    public function store(CategoryRequest $request)
     {
-        $category = Category::create([
-            'en_name' => $request->en_name,
-            'en_detail' => $request->en_detail,
-            'ar_name' => $request->ar_name,
-            'ar_detail' => $request->ar_detail,
-        ]);
-        return "Added";
+        try{
+            $category = Category::create([
+                'en_name' => $request->en_name,
+                'en_detail' => $request->en_detail,
+                'ar_name' => $request->ar_name,
+                'ar_detail' => $request->ar_detail,
+            ]);
+            return response()->json([
+                'message' => 'Category Successfully Added'
+            ]); 
+        }catch(\Exception $exception) {
+            return response()->json([
+                'message' => $exception->getMessage()
+            ]); 
+        }
     }
 
     public function show(Request $request, $id)
     {
-        $category = Category::find($id);
-        $category->en_name = $request->en_name;
-        $category->ar_name = $request->ar_name;
-        $category->en_detail = $request->en_detail;
-        $category->ar_detail = $request->ar_detail;
-        $res = $category->save();
-        return $res;
+       
     }
 
     public function edit($id)
     {
         $category = Category::find($id);
-        return $category;
+        return view('backend.categories.model', compact('category'));
     }
 
-    public function update(Request $request, $id)
+    public function update(CategoryRequest $request, $id)
     {
-        $category = Category::find($id);
-        $category->en_name = $request->en_name;
-        $category->ar_name = $request->ar_name;
-        $category->en_detail = $request->en_detail;
-        $category->ar_detail = $request->ar_detail;
-        $res = $category->save();
-        return "Updated";
+        try{
+            $category = Category::find($id);
+            $category->en_name = $request->en_name;
+            $category->ar_name = $request->ar_name;
+            $category->en_detail = $request->en_detail;
+            $category->ar_detail = $request->ar_detail;
+            $res = $category->save();
+            return response()->json([
+                'message' => 'Category Successfully Updated'
+            ]); 
+        }catch(\Exception $exception) {
+            return response()->json([
+                'message' => 'Something Went wrong'
+            ]); 
+        }
     }
 
     public function destroy($id)
     {
-        $category = Category::find($id);
-        $res = $category->delete();
-        return "Deleted";
+        try{
+
+            $category = Category::find($id);
+            $res = $category->delete();
+            return response()->json([
+                'message' => 'Category Successfully Deleted'
+            ]);
+        }catch(\Exception $exception) {
+            return response()->json([
+                'message' => 'Something Went wrong'
+            ]); 
+        }
+        // $exception->getMessage()
 
     }
 }
