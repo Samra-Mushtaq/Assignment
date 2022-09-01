@@ -40,4 +40,9 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('categories', 'App\Http\Controllers\Backend\CategoryController');
     Route::resource('translations', 'App\Http\Controllers\Backend\TranslationController');
     Route::resource('notifications', 'App\Http\Controllers\Backend\NotificationController');
+
+    Route::controller(DropzoneController::class)->group(function(){
+        Route::get('dropzone', 'index');
+        Route::post('dropzone/store', 'store')->name('dropzone.store');
+    });
 });

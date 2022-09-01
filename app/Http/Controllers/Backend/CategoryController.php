@@ -110,12 +110,21 @@ class CategoryController extends Controller
 
             $category = Category::find($id);
             $res = $category->delete();
-            return response()->json([
-                'message' => 'Category Successfully Deleted'
-            ]);
+            if($res){
+                return response()->json([
+                    'message' => 'Category Successfully Deleted',
+                    'status' => 'success',
+                ]);
+            }else{
+                return response()->json([
+                    'message' => 'Category cannot be deleted as products exists against this category',
+                    'status' => 'error',
+                ]);
+            }
         }catch(\Exception $exception) {
             return response()->json([
-                'message' => 'Something Went wrong'
+                'message' => 'Something Went wrong',
+                'status' => 'error',
             ]); 
         }
         // $exception->getMessage()

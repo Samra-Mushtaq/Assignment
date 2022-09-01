@@ -13,14 +13,29 @@
 
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+
+    
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
 </head>
 
-<script>
-    $(document).ready(function(){
-    });
-    var APP_URL = {!! json_encode(url('/')) !!};
+<style>
+    .select2-container--default.select2-container .select2-selection--multiple {
+        border: solid #ced4da 1px !important;
+    }
+    .select2-container--default.select2-container .select2-selection--single {
+        border: solid #ced4da 1px !important;
+        height: 36px;
+        font-family: sans-serif;
+        font-size: 15px;
+    }
     
-</script>
+
+</style>
 
 @vite(['resources/js/backend/common.js'])
 
@@ -77,6 +92,7 @@
         </div>
         <!-- main @e -->
     </div>
+
 
 </body>
 </html>

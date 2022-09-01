@@ -36,11 +36,11 @@ function deleteConfirmation(url, tableId) {
                 if (response.status === 200) {
                     swal.close();
                     $(tableId).DataTable().ajax.reload();
-                    toastMessage(response.data.message, "success");
+                    toastMessage(response.data.message, response.data.status);
                 }
             }).catch(error => {
                 swal.close();
-                toastMessage("", "error");
+                toastMessage("Something Went wrong", "error");
                 
             });
         }
@@ -68,7 +68,7 @@ $('body').on('click', '[data-act=ajax-modal]', function () {
         $("#ajax_general_model").modal("show");
         
     }).catch(error => {
-        toastMessage("", "error");
+        toastMessage("Something Went wrong", "error");
     });
 });
 
@@ -108,7 +108,7 @@ function sendAjaxForm(form) {
             if (datatable !== '') $(datatable).DataTable().ajax.reload();
             toastMessage(response.data.message, "success");
         }else{
-            toastMessage("", "error");
+            toastMessage("Something Went wrong", "error");
         }
     })
     .catch(error => {
@@ -120,7 +120,7 @@ function sendAjaxForm(form) {
         }else if(datatable == "#products-table"){
             $('#en_name_error').text(error.response.data.errors.en_name);
             $('#ar_name_error').text(error.response.data.errors.ar_name);
-            $('#category_error').text(error.response.data.errors.category);
+            $('#select_category_error').text(error.response.data.errors.categories);
             $('#en_description_error').text(error.response.data.errors.en_description);
             $('#ar_description_error').text(error.response.data.errors.ar_description);
             $('#price_error').text(error.response.data.errors.price);
@@ -131,7 +131,7 @@ function sendAjaxForm(form) {
             $('#description_en_error').text(error.response.data.errors.description_en);
             $('#description_ar_error').text(error.response.data.errors.description_ar);
         }
-        toastMessage("", "error");
+        toastMessage("Something Went wrong", "error");
     })
     .finally(response => {
         btn.removeAttr('disabled');
@@ -140,10 +140,10 @@ function sendAjaxForm(form) {
 
 function toastMessage(message, status) {
     toastr.options.positionClass = "toast-top-center";
-   if(status == "success"){
+   if(status == "success" && message != "Something Went wrong"){
     toastr.success(message);
    }else{
-    toastr.error("SomeThing Went Wrong");
+    toastr.error(message);
    }
 }
 

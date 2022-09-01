@@ -26,13 +26,21 @@
         <div class="form-group">
             <label class="form-label" for="category"> Category</label>
             <div class="form-control-wrap">
-                <select class="form-select form-select-solid input" name="category" id="category" required>
+                <select class="form-select form-select-solid input "  name="categories[]" id="select_category" multiple="multiple" required>
                     <option value="0" selected disabled>Select Category</option>
                     @foreach ($categories as $key => $category)
-                        <option value="{{$category->id}}" @if($isEdit && $product->category->id == $category->id) selected @endif >{{$category->en_name}} | {{$category->ar_name}}</option>
+                        <?php $select = 0; ?>
+                        @if($isEdit)
+                            @foreach ($product->category as $key => $product_category)
+                                @if($product_category->id == $category->id)
+                                    <?php $select = 1; ?>
+                                @endif
+                            @endforeach
+                        @endif
+                        <option value="{{$category->id}}" @if($isEdit && $select == 1) selected @endif >{{$category->en_name}} | {{$category->ar_name}}</option>
                     @endforeach
                 </select>
-                <span class="text-danger" id="category_error"></span>
+                <span class="text-danger" id="select_category_error"></span>
             </div>
         </div>
         <div class="form-group">
@@ -73,9 +81,20 @@
             <div class="form-control-wrap">
                 <input type="file" id="image"  name="image" class="form-control">
             </div>
-        </div>   
+        </div>
+        
         <div class="form-group">
             <button type="submit" class="btn btn-primary" data-button="submit">Submit</button>
         </div>
     </div>
 </form>
+
+<script>
+    $("#select_category").select2({
+        dropdownParent: $('#ajax_general_model #ajax_model_inner_content')
+    });
+    $("#status").select2({
+        dropdownParent: $('#ajax_general_model #ajax_model_inner_content')
+    });
+   
+</script>

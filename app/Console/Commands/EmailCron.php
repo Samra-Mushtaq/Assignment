@@ -7,7 +7,7 @@ use Illuminate\Console\Command;
 use App\Models\User;
 use Carbon\Carbon;
 use Mail;
-use App\Mail\AdminMail;
+use App\Mail\AdminEmail;
 
 class EmailCron extends Command
 {
@@ -32,23 +32,30 @@ class EmailCron extends Command
      */
     public function handle()
     {
-        $email = 'admin@admin.com';
-        $current = Carbon::now();
-        $before = Carbon::now()->subHours(12);
-        $before_date_time = $before->toDateTimeString();
-        $current_date_time = $current->toDateTimeString();
-        // dd($before_date_time . " - " . $current_date_time);
 
-        $users = User::where('created_at', '>=', $before_date_time)->where('created_at', '<=', $current_date_time)->get();
+        
+        $admin_user = User::whereHas(
+            'roles', function($q){
+                $q->where('name', 'admin');
+            }
+        )->first();
+        
+        if($admin_user != null){
 
-        $data["users"] = $users;
-        $data["email"] = $email;
-        $data["title"] = "Daily Update";
-        $data["body"] = "";
-
-        Mail::send('backend.mails.admin_mail', $data, function($message)use($data) {
-            $message->to($data["email"], $data["email"])
-                    ->subject($data["title"]);
-        });
+            $email = $admin_user->email; 
+            $current = Carbon::now();
+            $before = Carbon::now()->subHours(12);
+            $before_date_time = $before->toDateTimeString();
+            $current_date_time = $current->toDateTimeString();
+            // dd($before_date_time . " - " . $current_date_time);
+            $users = User::whereBetween('created_at', [$before_date_time,$current_date_time])->get();
+            $data = [
+                "users" => $users,
+                "email" => $email,
+                "title" => "New Registered Users Detail"
+            ];
+            Mail::to($email)->send(new AdminEmail($data));
+        }
+      
     }
 }

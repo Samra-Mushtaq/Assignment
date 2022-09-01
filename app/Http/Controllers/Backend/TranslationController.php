@@ -142,11 +142,13 @@ class TranslationController extends Controller
         try{
             $translations = LanguageLine::where('id', $id)->delete();
             return response()->json([
-                'message' => 'Translation Successfully Deleted'
+                'message' => 'Translation Successfully Deleted',
+                'status' => 'error',
             ]); 
         }catch(\Exception $exception) {
             return response()->json([
-                'message' => 'Something Went wrong'
+                'message' => 'Something Went wrong',
+                'status' => 'error',
             ]); 
         }
     }

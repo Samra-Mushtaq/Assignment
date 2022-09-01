@@ -147,11 +147,13 @@ class NotificationController extends Controller
             $user = auth()->user();
             $res = $user->notifications()->where('id', $id)->delete();
             return response()->json([
-                'message' => 'Notification Successfully Deleted'
+                'message' => 'Notification Successfully Deleted',
+                'status' => 'success',
             ]); 
         }catch(\Exception $exception) {
             return response()->json([
-                'message' => 'Something Went wrong'
+                'message' => 'Something Went wrong',
+                'status' => 'error',
             ]); 
         }
     }

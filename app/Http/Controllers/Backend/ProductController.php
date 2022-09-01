@@ -14,6 +14,7 @@ use App\Http\Requests\ProductRequest;
 
 use DataTables;
 
+
 class ProductController extends Controller
 {
     function __construct()
@@ -30,7 +31,7 @@ class ProductController extends Controller
     }
 
     public function dataTable () {
-        $products = Product::with('category')->orderBy('id', 'desc'); 
+        $products = Product::orderBy('id', 'desc'); 
         return Datatables::of($products)
             ->addIndexColumn()
             ->addColumn('actions', function ($record) {
@@ -51,8 +52,12 @@ class ProductController extends Controller
                 return $actions;
             })
             ->addColumn('category', function ($record) {
-                $category = $record->category->en_name . $record->category->ar_name;
-                return $category;
+                $category_data = "";
+                foreach($record->category as $key=>$category){
+                    $category_data .= $category->en_name . " | ". $category->ar_name . " , ";
+                }
+                $category_data = substr_replace($category_data ,"", -2);
+                return $category_data;
             })
             ->addColumn('en_name', function ($record) {
                 $name_column = '';
@@ -85,29 +90,38 @@ class ProductController extends Controller
             }else{
                 $filename  = ""; 
             } 
-            $Product = Product::create([
-                'en_name' => $request->en_name,
-                'ar_name' => $request->ar_name,
-                'en_description' => $request->en_description,
-                'ar_description' => $request->ar_description,
-                'category_id' => $request->category,
-                'status' => $request->status,
-                'price' => $request->price,
-                'image' => $filename,
-            ]);
+            $product = new Product;
+            $product->en_name = $request->en_name;
+            $product->en_description = $request->en_description;
+            $product->ar_name = $request->ar_name;
+            $product->ar_description = $request->ar_description;
+            $product->status = $request->status;
+            $product->price = $request->price;
+            if(isset($request->image)){
+                $product->image = $filename;
+            }
+            $res = $product->save();
+
+            $product = Product::orderBy('id', 'desc')->first();
+            foreach($request->categories as $category_id){
+                $category = Category::where('id', $category_id)->first();
+                $product->category()->attach($category);
+            }
+
             return response()->json([
                 'message' => 'Product Successfully Added'
             ]); 
         }catch(\Exception $exception) {
             return response()->json([
-                'message' => 'Something Went wrong'
+                'message' => $exception->getMessage()
             ]); 
         }
     }
 
     public function show(Request $request)
     {
-       
+        $categories = Category::orderBy('id','DESC')->get();
+        return view('backend.products.add',compact('categories'));
     }
 
     public function edit($id)
@@ -131,18 +145,27 @@ class ProductController extends Controller
                 $img->stream(); 
                 Storage::disk('local')->put('public'.'/'.$filename, $img, 'public');
             }
-            $product = Product::find($id);
+            $product = Product::with('category')->find($id);
+            foreach($product->category as $category){
+                $product->category()->where('category_id', $category->id)->detach();
+            }
             $product->en_name = $request->en_name;
             $product->en_description = $request->en_description;
             $product->ar_name = $request->ar_name;
             $product->ar_description = $request->ar_description;
             $product->status = $request->status;
-            $product->category_id = $request->category;
             $product->price = $request->price;
             if(isset($request->image)){
                 $product->image = $filename;
             }
             $res = $product->save();
+
+            $product = Product::where('id', $id)->first();
+            foreach($request->categories as $category_id){
+                $category = Category::where('id', $category_id)->first();
+                $product->category()->attach($category);
+            }
+
             return response()->json([
                 'message' => 'Product Successfully Updated'
             ]); 
@@ -159,11 +182,13 @@ class ProductController extends Controller
             $product = Product::find($id);
             $res = $product->delete();
             return response()->json([
-                'message' => 'Product Successfully Deleted'
+                'message' => 'Product Successfully Deleted',
+                'status' => 'success',
             ]); 
         }catch(\Exception $exception) {
             return response()->json([
-                'message' => 'Something Went wrong'
+                'message' => 'Something Went wrong',
+                'status' => 'error',
             ]); 
         }
     }

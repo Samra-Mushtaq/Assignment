@@ -24,7 +24,7 @@ class CategoryRequest extends FormRequest
     public function rules()
     {
         return [
-            'en_name' => 'required|min:5',
+            'en_name' => 'required|min:5|unique:categories',
             'ar_name' => 'required',
             'en_detail' => 'required|min:5',
             'ar_detail' => 'required'
@@ -35,6 +35,7 @@ class CategoryRequest extends FormRequest
     {
         return [
             'en_name.required' => 'Name (en) field is required',
+            'en_name.unique' => 'Given Name (en) is already assigned',
             'ar_name.required'  => 'Name (ar) field is required',
             'en_detail.required' => 'Detail (en) field is required',
             'ar_detail.required'  => 'Detail (ar) field is required',

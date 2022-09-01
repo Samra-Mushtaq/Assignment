@@ -31,7 +31,7 @@ class ProductRequest extends FormRequest
             'ar_description' => 'required',
             'price' => 'required',
             'status' => 'required',
-            'category' => 'required',
+            'categories' => 'required',
         ];
     }
 
@@ -42,7 +42,7 @@ class ProductRequest extends FormRequest
             'ar_name.required'  => 'Name (ar) field is required',
             'en_description.required' => 'Description (en) field is required',
             'ar_description.required'  => 'Description (ar) field is required',
-            'category.required'  => 'Category field is required',
+            'categories.required'  => 'Category field is required',
             'price.required' => 'Price field is required',
             'status.required'  => 'Status field is required',
         ];

@@ -27,7 +27,7 @@ function search_function($name, $language, $product_name , $category_name, $pric
 
     // If Only Category Name Given
     if(!isset($product_name) && isset($category_name)){
-        $category_data =  Category::Where($name, 'like', "%{$category_name}%")->orderBy($name, $sort);
+        $category_data =  Category::with('products')->Where($name, 'like', "%{$category_name}%")->orderBy($name, $sort);
         $data =  $category_data->paginate(10);
     }
 

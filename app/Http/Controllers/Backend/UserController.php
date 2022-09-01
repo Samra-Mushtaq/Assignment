@@ -12,7 +12,7 @@ use DataTables;
 
 use Carbon\Carbon;
 use Mail;
-use App\Mail\AdminMail;
+use App\Mail\AdminEmail;
 
 class UserController extends Controller
 {
@@ -34,7 +34,8 @@ class UserController extends Controller
     }
 
     public function create()
-    {
+    { 
+        
     }
 
     public function store(Request $request)
