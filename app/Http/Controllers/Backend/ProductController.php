@@ -107,7 +107,7 @@ class ProductController extends Controller
     public function create()
     {
         $categories = Category::orderBy('id','DESC')->get();
-        return view('backend.products.add',compact('categories'));
+        return view('backend.products.create',compact('categories'));
     }
 
     public function store(ProductRequest $request)
@@ -224,11 +224,13 @@ class ProductController extends Controller
             $product->price = $request->price;
             $res = $product->save();
 
-            $product = Product::where('id', $id)->first();
-            foreach($request->categories as $category_id){
-                $category = Category::where('id', $category_id)->first();
-                $product->category()->attach($category);
-            }
+            $product->category()->sync($request->categories);
+
+            // $product = Product::where('id', $id)->first();
+            // foreach($request->categories as $category_id){
+            //     $category = Category::where('id', $category_id)->first();
+            //     $product->category()->attach($category);
+            // }
 
             return response()->json([
                 'status'=>"success",

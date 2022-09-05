@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class Attachment extends Model
 {
     use HasFactory;
-    protected $table = 'image_attachments';
     
     public function imageable()
     {

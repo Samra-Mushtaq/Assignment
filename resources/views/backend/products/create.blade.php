@@ -60,7 +60,7 @@
                                         <label class="form-label" for="category"> Category</label>
                                         <div class="form-control-wrap">
                                             <select class="form-select form-select-solid input "  name="categories[]" id="select_category" multiple="multiple" required>
-                                                <option value="0" selected disabled>Select Category</option>
+                                                <option value="0" disabled>Select Category</option>
                                                 @foreach ($categories as $key => $category)
                                                     <option value="{{$category->id}}" >{{$category->en_name}} | {{$category->ar_name}}</option>
                                                 @endforeach

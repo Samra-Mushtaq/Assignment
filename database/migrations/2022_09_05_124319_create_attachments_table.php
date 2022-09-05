@@ -13,13 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('image_attachments', function (Blueprint $table) {
+        Schema::create('attachments', function (Blueprint $table) {
             $table->id();
             $table->string("filename");
             $table->string("size");
             $table->string("extension");
-            $table->integer('imageable_id');
-            $table->string("imageable_type");
+            $table->morphs('attachable');
             $table->timestamps();
         });
     }
@@ -31,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('image_attachments');
+        Schema::dropIfExists('attachments');
     }
 };

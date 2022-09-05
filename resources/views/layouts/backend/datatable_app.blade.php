@@ -31,6 +31,7 @@
 <style>
     .select2-container--default.select2-container .select2-selection--multiple {
         border: solid #ced4da 1px !important;
+        height: 36px;
     }
     .select2-container--default.select2-container .select2-selection--single {
         border: solid #ced4da 1px !important;
