@@ -1,4 +1,4 @@
-@extends('layouts.backend.index_app')
+@extends('layouts.backend.datatable_app')
 
 @section('content')
 <div class="nk-content p-0">
@@ -32,4 +32,22 @@
         </div>
     </div>
 </div>
+<script type="text/javascript">
+    var APP_URL = {!! json_encode(url('/')) !!};
+    $(function () {
+        
+        var table = $('.data-table').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: APP_URL + "/users",
+            columns: [
+                {data: 'id', name: 'id'},
+                {data: 'name', name: 'name'},
+                {data: 'email', name: 'email'},
+                {data: 'phone_no', name: 'phone_no', orderable: false, searchable: false},
+            ]
+        });
+        
+    });
+</script>
 @endsection

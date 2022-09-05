@@ -41,8 +41,16 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('translations', 'App\Http\Controllers\Backend\TranslationController');
     Route::resource('notifications', 'App\Http\Controllers\Backend\NotificationController');
 
-    Route::controller(DropzoneController::class)->group(function(){
-        Route::get('dropzone', 'index');
-        Route::post('dropzone/store', 'store')->name('dropzone.store');
-    });
+    Route::get('user-data', 'App\Http\Controllers\Backend\CalenderController@userdata')->name("user-calendar-data");
+    Route::get('product-data', 'App\Http\Controllers\Backend\CalenderController@productdata')->name("product-calendar-data");
+
+    Route::post('/storeimgae', 'App\Http\Controllers\Backend\ProductController@storeimage'); 
+    Route::post('/product-image', 'App\Http\Controllers\Backend\ProductController@product_image'); 
+    Route::post('/images-delete', 'App\Http\Controllers\Backend\ProductController@product_image_remove'); 
+
+    Route::post('/store', 'App\Http\Controllers\Backend\ProductController@store')->name('form.data');
+
+    
+    Route::get('product-eloquent', 'App\Http\Controllers\Backend\ProductController@eloquent');
+   
 });

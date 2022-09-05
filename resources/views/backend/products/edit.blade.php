@@ -38,21 +38,25 @@
 
                     <div class="card card-preview">
                         <div class="card-inner">
-                            <form action="{{ route('products.store') }}" name="product_form"  id="product_form" method="post"  enctype="multipart/form-data">
+                            <?php 
+                             $url = route('products.update', $product->id) 
+                            ?>
+                            <form action="{{ $url }}" name="product_form"  id="product_form" method="post"  enctype="multipart/form-data">
                                 @csrf
-                                <input type="hidden" name="product_id" id="product_id" value="">
+                                @method('put')
+                                <input type="hidden" name="product_id" id="product_id" value="{{$product->id}}">
                                 <div class="modal-body">
                                     <div class="form-group">
                                         <label class="form-label" for="en_name"> Name (en)</label>
                                         <div class="form-control-wrap">
-                                            <input type="text" class="form-control input" name="en_name" id="en_name" required >
+                                            <input type="text" class="form-control input" name="en_name" id="en_name"  value="{{$product->en_name}}" required >
                                             <span class="text-danger" id="en_name_error"></span>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label" for="ar_name"> Name (ar)</label>
                                         <div class="form-control-wrap">
-                                            <input type="text" class="form-control input" name="ar_name" id="ar_name" required>
+                                            <input type="text" class="form-control input" name="ar_name" id="ar_name"  value="{{$product->ar_name}}" required>
                                             <span class="text-danger" id="ar_name_error"></span>
                                         </div>
                                     </div>
@@ -62,7 +66,13 @@
                                             <select class="form-select form-select-solid input "  name="categories[]" id="select_category" multiple="multiple" required>
                                                 <option value="0" selected disabled>Select Category</option>
                                                 @foreach ($categories as $key => $category)
-                                                    <option value="{{$category->id}}" >{{$category->en_name}} | {{$category->ar_name}}</option>
+                                                <?php $select = 0; ?>
+                                                    @foreach ($product->category as $key => $product_category)
+                                                        @if($product_category->id == $category->id)
+                                                            <?php $select = 1; ?>
+                                                        @endif
+                                                    @endforeach
+                                                    <option value="{{$category->id}}" @if( $select == 1) selected @endif  >{{$category->en_name}} | {{$category->ar_name}}</option>
                                                 @endforeach
                                             </select>
                                             <span class="text-danger" id="select_category_error"></span>
@@ -71,7 +81,7 @@
                                     <div class="form-group">
                                         <label class="form-label" for="en_description">Description (en)</label>
                                         <div class="form-control-wrap">
-                                            <textarea class="form-control input"  name="en_description"  id="en_description" required></textarea>
+                                            <textarea class="form-control input"  name="en_description"  id="en_description" required>{{ $product->en_description }}</textarea>
                                             <span class="text-danger" id="en_description_error"></span>
                                         </div>
                                     </div>
@@ -79,28 +89,28 @@
                                     <div class="form-group">
                                         <label class="form-label" for="ar_description">Description (ar)</label>
                                         <div class="form-control-wrap">
-                                            <textarea class="form-control input"  name="ar_description"  id="ar_description" required></textarea>
+                                            <textarea class="form-control input"  name="ar_description"  id="ar_description" required>{{ $product->ar_description }}</textarea>
                                             <span class="text-danger" id="ar_description_error"></span>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label" for="price">Price</label>
                                         <div class="form-control-wrap">
-                                            <input type="number" class="form-control input" name="price"  id="price"  required>
+                                            <input type="number" class="form-control input" name="price"  id="price" value="{{ $product->price }}" required>
                                             <span class="text-danger" id="price_error"></span>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label" for="lat">Lat</label>
                                         <div class="form-control-wrap">
-                                            <input type="number" step="any" class="form-control input" name="lat"  id="lat"  required>
+                                            <input type="number" class="form-control input" name="lat"  id="lat" value="{{ $product->lat }}"  required>
                                             <span class="text-danger" id="lat_error"></span>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label" for="long">Long</label>
                                         <div class="form-control-wrap">
-                                            <input type="number" step="any" class="form-control input" name="long"  id="long"  required>
+                                            <input type="number" class="form-control input" name="long"  id="long" value="{{ $product->long }}"  required>
                                             <span class="text-danger" id="long_error"></span>
                                         </div>
                                     </div>
@@ -109,8 +119,8 @@
                                         <div class="form-control-wrap">
                                             <select class="form-select form-select-solid input" name="status" id="status" >
                                                 <option value="0" selected disabled>Select Status</option>
-                                                <option value="Active">Active</option>
-                                                <option value="Pending">Pending</option>
+                                                <option value="Active" @if($product->status == "Active") selected @endif>Active</option>
+                                                <option value="Pending" @if($product->status == "Pending") selected @endif>Pending</option>
                                             </select>
                                             <span class="text-danger" id="status_error"></span>
                                         </div>
@@ -154,6 +164,20 @@
             // The setting up of the dropzone
             init: function() {
                 var myDropzone = this;
+                let product_id = document.getElementById('product_id').value;
+                $.post({
+                    url: '/product-image',
+                    data: {product_id: product_id, _token: $('[name="_token"]').val()},
+                    dataType: 'json',
+                    success: function (data) {
+                        $.each(data.images, function (key, value) {
+                            var file = {name: value.filename, size: value.size}
+                            myDropzone.options.addedfile.call(myDropzone, file)
+                            myDropzone.options.thumbnail.call(myDropzone, file, "http://" + location.hostname + ':' + location.port + '/storage/' + value.filename)
+                            myDropzone.emit('complete', file)
+                        })
+                    }
+                });
                 //form submission code goes here
                 $("form[name='product_form']").submit(function(event) {
                     //Make sure that the form isn't actully being sent.
@@ -200,10 +224,8 @@
                         }
                     });
                 });
-
                 //Gets triggered when we submit the image.
                 this.on('sending', function(file, xhr, formData){
-                    // alert("");
                     //fetch the user id from hidden input field and send that product_id with our image
                     let product_id = document.getElementById('product_id').value;
                     formData.append('product_id', product_id);
@@ -211,7 +233,7 @@
                 
                 this.on("success", function (file, response) {
                     $('#product_form')[0].reset();
-                    swal("Product Alert", "Product Successfully Created", "success").then((value) => {
+                    swal("Product Alert", "Product Successfully Updated", "success").then((value) => {
                         location.reload();
                     });
                 });

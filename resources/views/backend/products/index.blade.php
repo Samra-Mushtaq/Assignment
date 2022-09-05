@@ -11,8 +11,7 @@
                             <h4 class="nk-block-title">
                                 Products
                                 @can('product-create')
-                                <button type="button" class="btn btn-success ml-4" data-act="ajax-modal"
-                                    data-method="get" data-action-url="{{ route('products.create') }}" data-title="Create New Product">Create New Product</button>
+                                    <a class="btn btn-success ml-4" href="{{ route('products.create') }}"> Create New Product</a>
                                 @endcan
                             </h4>
                         </div>
